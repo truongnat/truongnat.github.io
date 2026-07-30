@@ -1,31 +1,81 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, Send, Command, Cpu, Sparkles, FolderGit2, Code2, Link as LinkIcon, User, ExternalLink } from "lucide-react";
+import { Terminal, Send, Cpu, Sparkles, FolderGit2, Code2, Link as LinkIcon, User, ExternalLink, Moon, Sun, Globe, Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
-type Message = {
-  id: string;
-  sender: "user" | "sys";
-  content: React.ReactNode;
+type Message = { id: string; sender: "user" | "sys"; content: React.ReactNode; };
+
+// Dictionary for i18n
+const DICT = {
+  en: {
+    systemPrompt: "INITIATING NEURAL HANDSHAKE... SUCCESS.\nWelcome. I am DQ.SYS, the synthetic neural representation of Dao Quang Truong.\nI have been trained on his entire engineering history, source code, and architectural methodologies.\nSelect a protocol below to begin data retrieval.",
+    btnWho: "Who is Dao Quang Truong?",
+    btnProjects: "View Projects",
+    btnSkills: "Check Skills",
+    btnContact: "Contact Protocol",
+    tabMatrix: "Identity Matrix",
+    tabCode: "Source Code",
+    tabConfig: "User Config",
+    placeholder: "Select a command above to interact...",
+    footer: "DQ.SYS can make mistakes. Verify important information.",
+    codeTitle: "Neural Repositories & Modules",
+    codeDesc: "Raw source code and telemetry data from recent commits.",
+    configTitle: "System Configuration",
+    configDesc: "Modify the UI runtime parameters below.",
+    theme: "Theme",
+    lang: "Language",
+    resume: "Download Original CV",
+    msgWho: (
+      <div className="space-y-2">
+        <p className="text-[var(--text-primary)]">Entity Profile Loaded.</p>
+        <p>Dao Quang Truong is a Fullstack & AI Engineer with 6+ years of experience.</p>
+        <p>He specializes in building high-performance TypeScript applications, native cross-platform tools, and AI-assisted developer workflows.</p>
+        <p className="text-[var(--text-secondary)] italic mt-4">"Building intelligent systems and cross-platform products."</p>
+      </div>
+    ),
+    msgContact: "Establishing secure communication channels:"
+  },
+  vi: {
+    systemPrompt: "KHỞI TẠO KẾT NỐI THẦN KINH... THÀNH CÔNG.\nXin chào. Tôi là DQ.SYS, bản sao kỹ thuật số của Đào Quang Trường.\nTôi đã được huấn luyện bằng toàn bộ lịch sử làm việc, mã nguồn và tư duy kiến trúc của anh ấy.\nHãy chọn một giao thức bên dưới để bắt đầu truy xuất dữ liệu.",
+    btnWho: "Đào Quang Trường là ai?",
+    btnProjects: "Xem Dự án",
+    btnSkills: "Kiểm tra Kỹ năng",
+    btnContact: "Giao thức Liên hệ",
+    tabMatrix: "Ma trận Định danh",
+    tabCode: "Mã nguồn",
+    tabConfig: "Cấu hình Hệ thống",
+    placeholder: "Chọn một lệnh bên trên để tương tác...",
+    footer: "DQ.SYS có thể tạo ra lỗi. Vui lòng xác minh thông tin quan trọng.",
+    codeTitle: "Kho lưu trữ Thần kinh & Module",
+    codeDesc: "Mã nguồn gốc và dữ liệu phân tích từ các commit gần đây.",
+    configTitle: "Cấu hình Hệ thống",
+    configDesc: "Sửa đổi các thông số giao diện tại đây.",
+    theme: "Giao diện",
+    lang: "Ngôn ngữ",
+    resume: "Tải CV Gốc",
+    msgWho: (
+      <div className="space-y-2">
+        <p className="text-[var(--text-primary)]">Đã tải Hồ sơ Thực thể.</p>
+        <p>Đào Quang Trường là một Kỹ sư Fullstack & AI với hơn 6 năm kinh nghiệm.</p>
+        <p>Anh chuyên xây dựng các ứng dụng TypeScript hiệu suất cao, công cụ đa nền tảng (native) và các luồng làm việc hỗ trợ bởi AI cho lập trình viên.</p>
+        <p className="text-[var(--text-secondary)] italic mt-4">"Building intelligent systems and cross-platform products."</p>
+      </div>
+    ),
+    msgContact: "Đang thiết lập kênh giao tiếp bảo mật:"
+  }
 };
 
-const SYSTEM_PROMPT = `INITIATING NEURAL HANDSHAKE... SUCCESS.
-Welcome. I am DQ.SYS, the synthetic neural representation of Dao Quang Truong. 
-I have been trained on his entire engineering history, source code, and architectural methodologies.
-Select a protocol below to begin data retrieval.`;
-
 const PROJECTS = [
-  { name: "rnui", desc: "A high-performance, dual-layer UI design system for React Native (iOS + Android) with headless primitives.", link: "https://github.com/truongnat/rnui" },
+  { name: "rnui", desc: "Dual-layer UI design system for React Native (iOS + Android) with headless primitives.", link: "https://github.com/truongnat/rnui" },
   { name: "aix", desc: "AI Engineering Platform. TS monorepo consolidating skills, guardrails & autonomous SDLC.", link: "https://github.com/truongnat/aix" },
   { name: "simple-skills", desc: "Minimal AI agent skills with clear workflows, flat YAML contracts, and structured artifacts.", link: "https://github.com/truongnat/simple-skills" },
-  { name: "auraos-suite", desc: "Native desktop utility suite for Ubuntu (GNOME/Wayland). Built with Rust + Tauri v2 + Svelte 5.", link: "https://github.com/truongnat/auraos-suite" },
+  { name: "auraos-suite", desc: "Native desktop utility suite for Ubuntu (GNOME/Wayland). Built with Rust + Tauri v2.", link: "https://github.com/truongnat/auraos-suite" },
 ];
 
 const SKILLS = ["TypeScript", "Rust", "React Native", "Go", "Python", "AI Agents", "Cloudflare", "Tauri", "System Design"];
 
 function TypewriterText({ text, onComplete }: { text: string; onComplete?: () => void }) {
   const [displayed, setDisplayed] = useState("");
-  
   useEffect(() => {
     let i = 0;
     const timer = setInterval(() => {
@@ -38,99 +88,106 @@ function TypewriterText({ text, onComplete }: { text: string; onComplete?: () =>
     }, 15);
     return () => clearInterval(timer);
   }, [text, onComplete]);
-
-  return <span className="typewriter">{displayed}</span>;
+  return <span className="typewriter whitespace-pre-wrap">{displayed}</span>;
 }
 
 export default function App() {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [lang, setLang] = useState<"en" | "vi">("en");
+  const [activeTab, setActiveTab] = useState<"chat" | "code" | "config">("chat");
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const t = DICT[lang];
 
   useEffect(() => {
-    // Initial boot sequence
+    // Inject dark mode class
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
+  // Initial boot sequence
+  useEffect(() => {
+    setMessages([]);
+    setIsReady(false);
     setTimeout(() => {
       setMessages([{
         id: "sys-1",
         sender: "sys",
-        content: <TypewriterText text={SYSTEM_PROMPT} onComplete={() => setIsReady(true)} />
+        content: <TypewriterText text={t.systemPrompt} onComplete={() => setIsReady(true)} />
       }]);
     }, 500);
-  }, []);
+  }, [lang]); // Re-run if language changes
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleAction = (action: string) => {
+  const handleAction = (actionKey: "btnWho" | "btnProjects" | "btnSkills" | "btnContact") => {
     if (!isReady || isTyping) return;
     
-    // Add user message
-    const newMessages = [...messages, { id: Date.now().toString(), sender: "user" as const, content: action }];
+    const actionText = t[actionKey];
+    const newMessages = [...messages, { id: Date.now().toString(), sender: "user" as const, content: actionText }];
     setMessages(newMessages);
     setIsTyping(true);
 
-    // Simulate AI thinking and responding
+    // Dynamic delay: Contact should be fast
+    const delay = actionKey === "btnContact" ? 200 : 800;
+
     setTimeout(() => {
       let response: React.ReactNode = "";
       
-      if (action === "View Projects") {
+      if (actionKey === "btnProjects") {
         response = (
           <div className="space-y-4">
-            <p>Accessing project repositories...</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
               {PROJECTS.map(p => (
-                <a key={p.name} href={p.link} target="_blank" rel="noreferrer" className="block p-4 border border-white/10 rounded-lg hover:border-[#00f0ff] hover:bg-[#00f0ff]/5 transition-all group">
+                <a key={p.name} href={p.link} target="_blank" rel="noreferrer" className="block p-4 border border-[var(--border-color)] rounded-lg hover:border-[var(--accent)] hover:bg-[var(--accent-bg)] transition-all group">
                   <div className="flex items-center gap-2 mb-2">
-                    <FolderGit2 className="w-4 h-4 text-[#00f0ff]" />
-                    <span className="font-mono text-white group-hover:text-[#00f0ff]">{p.name}</span>
-                    <ExternalLink className="w-3 h-3 text-neutral-500 ml-auto" />
+                    <FolderGit2 className="w-4 h-4 text-[var(--accent)]" />
+                    <span className="font-mono text-[var(--text-primary)] group-hover:text-[var(--accent)]">{p.name}</span>
+                    <ExternalLink className="w-3 h-3 text-[var(--text-secondary)] ml-auto" />
                   </div>
-                  <p className="text-sm text-neutral-400">{p.desc}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">{p.desc}</p>
                 </a>
               ))}
             </div>
           </div>
         );
-      } else if (action === "Check Skills") {
+      } else if (actionKey === "btnSkills") {
         response = (
-          <div>
-            <p>Scanning technical matrix...</p>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {SKILLS.map((s, i) => (
-                <span key={s} className="px-3 py-1 rounded bg-white/5 border border-white/10 font-mono text-xs text-neutral-300 animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
-                  {s}
-                </span>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-2">
+            {SKILLS.map((s, i) => (
+              <span key={s} className="px-3 py-1 rounded bg-[var(--border-color)] border border-[var(--border-color)] font-mono text-xs text-[var(--text-primary)] animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
+                {s}
+              </span>
+            ))}
           </div>
         );
-      } else if (action === "Who is Dao Quang Truong?") {
+      } else if (actionKey === "btnWho") {
+        response = t.msgWho;
+      } else if (actionKey === "btnContact") {
         response = (
-          <div className="space-y-2">
-            <p className="text-white">Entity Profile Loaded.</p>
-            <p>Dao Quang Truong is a Fullstack & AI Engineer with 6+ years of experience.</p>
-            <p>He specializes in building high-performance TypeScript applications, native cross-platform tools, and AI-assisted developer workflows.</p>
-            <p className="text-neutral-500 italic mt-4">"Building intelligent systems and cross-platform products."</p>
-          </div>
-        );
-      } else if (action === "Contact Protocol") {
-        response = (
-          <div className="space-y-4">
-            <p>Establishing secure communication channels:</p>
-            <div className="flex flex-col gap-3">
-              <a href="mailto:truongdq.dev@gmail.com" className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
+          <div className="space-y-3">
+            <p className="text-[var(--text-secondary)]">{t.msgContact}</p>
+            <div className="flex flex-col gap-2">
+              <a href="mailto:truongdq.dev@gmail.com" className="flex items-center gap-3 p-3 rounded-lg bg-[var(--msg-sys)] border border-[var(--border-color)] hover:border-[var(--accent)] transition-colors">
                 <Mail className="w-5 h-5 text-red-400" />
-                <span className="font-mono text-sm">truongdq.dev@gmail.com</span>
+                <span className="font-mono text-sm text-[var(--text-primary)]">truongdq.dev@gmail.com</span>
               </a>
-              <a href="https://github.com/truongnat" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
-                <FaGithub className="w-5 h-5 text-white" />
-                <span className="font-mono text-sm">github.com/truongnat</span>
+              <a href="https://github.com/truongnat" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-[var(--msg-sys)] border border-[var(--border-color)] hover:border-[var(--accent)] transition-colors">
+                <FaGithub className="w-5 h-5 text-[var(--text-primary)]" />
+                <span className="font-mono text-sm text-[var(--text-primary)]">github.com/truongnat</span>
               </a>
-              <a href="https://linkedin.com/in/truongdq01" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
-                <FaLinkedin className="w-5 h-5 text-blue-400" />
-                <span className="font-mono text-sm">linkedin.com/in/truongdq01</span>
+              <a href="https://linkedin.com/in/truongdq01" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-[var(--msg-sys)] border border-[var(--border-color)] hover:border-[var(--accent)] transition-colors">
+                <FaLinkedin className="w-5 h-5 text-blue-500" />
+                <span className="font-mono text-sm text-[var(--text-primary)]">linkedin.com/in/truongdq01</span>
               </a>
             </div>
           </div>
@@ -139,58 +196,77 @@ export default function App() {
       
       setMessages([...newMessages, { id: Date.now().toString(), sender: "sys", content: response }]);
       setIsTyping(false);
-    }, 1000);
+    }, delay);
   };
 
-  return (
-    <div className="h-screen w-full bg-[#0a0a0a] text-neutral-300 font-sans flex overflow-hidden">
-      
-      {/* Sidebar - Moonshot Theme */}
-      <aside className="hidden md:flex w-64 flex-col border-r border-white/10 bg-[#050505] p-4">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neutral-800 to-black border border-white/20 flex items-center justify-center relative overflow-hidden">
-             <div className="absolute inset-0 bg-[#00f0ff]/20 animate-pulse-fast"></div>
-             <Sparkles className="w-4 h-4 text-[#00f0ff] relative z-10" />
+  const renderContent = () => {
+    if (activeTab === "code") {
+      return (
+        <div className="p-8 max-w-4xl mx-auto animate-fade-in">
+          <h2 className="text-2xl font-medium text-[var(--text-primary)] mb-2 flex items-center gap-3"><Code2 className="text-[var(--accent)]"/> {t.codeTitle}</h2>
+          <p className="text-[var(--text-secondary)] mb-8">{t.codeDesc}</p>
+          
+          <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] overflow-hidden shadow-xl">
+             <div className="border-b border-[var(--border-color)] bg-[var(--border-color)] p-3 flex gap-2">
+               <div className="w-3 h-3 rounded-full bg-red-400"></div>
+               <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+               <div className="w-3 h-3 rounded-full bg-green-400"></div>
+             </div>
+             <pre className="p-6 font-mono text-sm overflow-x-auto text-[var(--text-primary)] leading-relaxed">
+               <span className="text-purple-500 dark:text-purple-400">import</span> &#123; core &#125; <span className="text-purple-500 dark:text-purple-400">from</span> <span className="text-green-600 dark:text-green-400">'@dq/sys'</span>;{'\n\n'}
+               <span className="text-purple-500 dark:text-purple-400">const</span> init <span className="text-[var(--accent)]">=</span> <span className="text-purple-500 dark:text-purple-400">async</span> () <span className="text-[var(--accent)]">=&gt;</span> &#123;{'\n'}
+               {'  '}<span className="text-[var(--text-secondary)]">// Booting neural subsystems</span>{'\n'}
+               {'  '}<span className="text-purple-500 dark:text-purple-400">await</span> core.<span className="text-yellow-600 dark:text-yellow-200">loadModules</span>(['react-native', 'rust', 'ai']);{'\n'}
+               {'  '}<span className="text-purple-500 dark:text-purple-400">return</span> &#123; status: <span className="text-green-600 dark:text-green-400">'ONLINE'</span> &#125;;{'\n'}
+               &#125;;{'\n\n'}
+               init().<span className="text-yellow-600 dark:text-yellow-200">then</span>(console.log);
+             </pre>
           </div>
-          <span className="font-medium text-white tracking-wide">DQ.SYS <span className="text-xs text-neutral-500 ml-1">v1.0</span></span>
         </div>
-        
-        <div className="text-xs font-mono text-neutral-500 mb-4 uppercase tracking-wider">Neural Context</div>
-        
-        <nav className="flex flex-col gap-2 flex-1">
-          <button className="flex items-center gap-3 px-3 py-2 rounded-md bg-white/5 text-white border border-white/10 text-sm transition-colors text-left">
-            <Cpu className="w-4 h-4 text-[#00f0ff]" />
-            Identity Matrix
-          </button>
-          <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/5 text-neutral-400 hover:text-white transition-colors text-sm text-left">
-            <Code2 className="w-4 h-4" />
-            Source Code
-          </button>
-          <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/5 text-neutral-400 hover:text-white transition-colors text-sm text-left">
-            <User className="w-4 h-4" />
-            User Config
-          </button>
-        </nav>
-        
-        <div className="mt-auto pt-4 border-t border-white/10">
-          <a href="https://truongsoftware.com/Dao_Quang_Truong_CV.pdf" target="_blank" className="flex items-center gap-2 text-xs text-neutral-500 hover:text-white transition-colors">
-            <LinkIcon className="w-3 h-3" />
-            Download Original CV
-          </a>
+      );
+    }
+    
+    if (activeTab === "config") {
+      return (
+        <div className="p-8 max-w-4xl mx-auto animate-fade-in">
+          <h2 className="text-2xl font-medium text-[var(--text-primary)] mb-2 flex items-center gap-3"><User className="text-[var(--accent)]"/> {t.configTitle}</h2>
+          <p className="text-[var(--text-secondary)] mb-8">{t.configDesc}</p>
+          
+          <div className="space-y-6">
+            <div className="p-6 rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] flex justify-between items-center">
+              <div>
+                <h3 className="font-medium text-[var(--text-primary)] mb-1">{t.theme}</h3>
+                <p className="text-sm text-[var(--text-secondary)]">Toggle Light/Dark interface</p>
+              </div>
+              <button 
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-3 rounded-full bg-[var(--border-color)] hover:bg-[var(--msg-sys)] text-[var(--text-primary)] transition-colors"
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            </div>
+            
+            <div className="p-6 rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] flex justify-between items-center">
+              <div>
+                <h3 className="font-medium text-[var(--text-primary)] mb-1">{t.lang}</h3>
+                <p className="text-sm text-[var(--text-secondary)]">English / Tiếng Việt</p>
+              </div>
+              <button 
+                onClick={() => setLang(lang === 'en' ? 'vi' : 'en')}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--border-color)] hover:bg-[var(--msg-sys)] font-mono text-[var(--text-primary)] transition-colors"
+              >
+                <Globe className="w-4 h-4" />
+                {lang === 'en' ? 'VI' : 'EN'}
+              </button>
+            </div>
+          </div>
         </div>
-      </aside>
+      );
+    }
 
-      {/* Main Chat Area */}
-      <main className="flex-1 flex flex-col relative h-full">
-        {/* Background ambient light */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-[300px] bg-[#00f0ff]/5 blur-[120px] pointer-events-none"></div>
-
-        {/* Header (Mobile) */}
-        <header className="md:hidden flex items-center gap-3 p-4 border-b border-white/10 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-10">
-          <Sparkles className="w-5 h-5 text-[#00f0ff]" />
-          <span className="font-medium text-white">DQ.SYS</span>
-        </header>
-
+    // Default chat view
+    return (
+      <>
         {/* Chat History */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth">
           <AnimatePresence initial={false}>
@@ -201,14 +277,14 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex gap-4 max-w-3xl mx-auto ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
               >
-                <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === "sys" ? "bg-white/10 border border-white/20" : "bg-[#00f0ff]/20 text-[#00f0ff]"}`}>
-                  {msg.sender === "sys" ? <Sparkles className="w-4 h-4 text-[#00f0ff]" /> : <User className="w-4 h-4" />}
+                <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === "sys" ? "bg-[var(--msg-sys)] border border-[var(--border-color)]" : "bg-[var(--accent-bg)] text-[var(--accent)]"}`}>
+                  {msg.sender === "sys" ? <Sparkles className="w-4 h-4 text-[var(--accent)]" /> : <User className="w-4 h-4" />}
                 </div>
                 <div className={`flex-1 ${msg.sender === "user" ? "text-right" : ""}`}>
-                  <div className="font-medium text-sm text-neutral-400 mb-1">
+                  <div className="font-medium text-sm text-[var(--text-secondary)] mb-1">
                     {msg.sender === "sys" ? "DQ.SYS" : "Guest"}
                   </div>
-                  <div className={`prose prose-invert max-w-none text-sm md:text-base leading-relaxed ${msg.sender === "user" ? "text-white" : "text-neutral-300"}`}>
+                  <div className={`prose prose-invert max-w-none text-sm md:text-base leading-relaxed ${msg.sender === "user" ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
                     {msg.content}
                   </div>
                 </div>
@@ -217,15 +293,15 @@ export default function App() {
             
             {isTyping && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4 max-w-3xl mx-auto">
-                <div className="shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 animate-spin" />
+                <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--msg-sys)] border border-[var(--border-color)] flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-[var(--accent)] animate-spin" />
                 </div>
                 <div>
-                  <div className="font-medium text-sm text-neutral-400 mb-1">DQ.SYS</div>
+                  <div className="font-medium text-sm text-[var(--text-secondary)] mb-1">DQ.SYS</div>
                   <div className="flex gap-1 mt-2">
-                    <div className="w-2 h-2 rounded-full bg-neutral-600 animate-bounce"></div>
-                    <div className="w-2 h-2 rounded-full bg-neutral-600 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 rounded-full bg-neutral-600 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-[var(--text-secondary)] animate-bounce"></div>
+                    <div className="w-2 h-2 rounded-full bg-[var(--text-secondary)] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-[var(--text-secondary)] animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                   </div>
                 </div>
               </motion.div>
@@ -235,42 +311,101 @@ export default function App() {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 md:p-6 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a] to-transparent">
+        <div className="p-4 md:p-6 bg-gradient-to-t from-[var(--bg-main)] to-transparent">
           <div className="max-w-3xl mx-auto">
-            {/* Quick Actions */}
             <div className="flex flex-wrap gap-2 mb-4 justify-center md:justify-start">
-              {["Who is Dao Quang Truong?", "View Projects", "Check Skills", "Contact Protocol"].map((action) => (
+              {(["btnWho", "btnProjects", "btnSkills", "btnContact"] as const).map((key) => (
                 <button
-                  key={action}
-                  onClick={() => handleAction(action)}
+                  key={key}
+                  onClick={() => handleAction(key)}
                   disabled={!isReady || isTyping}
-                  className="px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-xs md:text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-panel)] hover:border-[var(--accent)] text-xs md:text-sm font-medium text-[var(--text-primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 >
-                  {action}
+                  {t[key]}
                 </button>
               ))}
             </div>
             
-            {/* Fake Input */}
-            <div className="relative flex items-center w-full rounded-xl border border-white/10 bg-[#050505] overflow-hidden focus-within:border-[#00f0ff]/50 focus-within:shadow-[0_0_15px_rgba(0,240,255,0.1)] transition-all">
-              <div className="pl-4 text-neutral-500">
-                <Terminal className="w-5 h-5" />
-              </div>
-              <input 
-                type="text" 
-                placeholder="Select a command above to interact..." 
-                disabled 
-                className="w-full bg-transparent p-4 text-sm outline-none text-white placeholder:text-neutral-600 disabled:opacity-50"
-              />
-              <button disabled className="pr-4 text-neutral-500">
-                <Send className="w-5 h-5" />
-              </button>
+            <div className="relative flex items-center w-full rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] overflow-hidden shadow-sm focus-within:border-[var(--accent)] focus-within:shadow-[0_0_15px_var(--accent-bg)] transition-all">
+              <div className="pl-4 text-[var(--text-secondary)]"><Terminal className="w-5 h-5" /></div>
+              <input type="text" placeholder={t.placeholder} disabled className="w-full bg-transparent p-4 text-sm outline-none text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] disabled:opacity-50" />
+              <button disabled className="pr-4 text-[var(--text-secondary)]"><Send className="w-5 h-5" /></button>
             </div>
-            <div className="text-center text-xs font-mono text-neutral-600 mt-3">
-              DQ.SYS can make mistakes. Verify important information.
+            <div className="text-center text-xs font-mono text-[var(--text-secondary)] mt-3">
+              {t.footer}
             </div>
           </div>
         </div>
+      </>
+    );
+  };
+
+  return (
+    <div className="h-screen w-full flex overflow-hidden selection:bg-[var(--accent)] selection:text-white">
+      
+      {/* Sidebar */}
+      <aside className="hidden md:flex w-64 flex-col border-r border-[var(--border-color)] bg-[var(--bg-panel)] p-4 relative z-20">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-8 h-8 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] flex items-center justify-center relative overflow-hidden">
+             <div className="absolute inset-0 bg-[var(--accent-bg)] animate-pulse-fast"></div>
+             <Sparkles className="w-4 h-4 text-[var(--accent)] relative z-10" />
+          </div>
+          <span className="font-medium text-[var(--text-primary)] tracking-wide">DQ.SYS <span className="text-xs text-[var(--text-secondary)] ml-1">v1.0</span></span>
+        </div>
+        
+        <div className="text-xs font-mono text-[var(--text-secondary)] mb-4 uppercase tracking-wider">Neural Context</div>
+        
+        <nav className="flex flex-col gap-2 flex-1">
+          <button 
+            onClick={() => setActiveTab('chat')}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'chat' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}
+          >
+            <Cpu className={`w-4 h-4 ${activeTab === 'chat' ? 'text-[var(--accent)]' : ''}`} />
+            {t.tabMatrix}
+          </button>
+          <button 
+             onClick={() => setActiveTab('code')}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'code' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}
+          >
+            <Code2 className={`w-4 h-4 ${activeTab === 'code' ? 'text-[var(--accent)]' : ''}`} />
+            {t.tabCode}
+          </button>
+          <button 
+             onClick={() => setActiveTab('config')}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'config' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}
+          >
+            <User className={`w-4 h-4 ${activeTab === 'config' ? 'text-[var(--accent)]' : ''}`} />
+            {t.tabConfig}
+          </button>
+        </nav>
+        
+        <div className="mt-auto pt-4 border-t border-[var(--border-color)]">
+          <a href="https://truongsoftware.com/Dao_Quang_Truong_CV.pdf" target="_blank" className="flex items-center gap-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+            <LinkIcon className="w-3 h-3" />
+            {t.resume}
+          </a>
+        </div>
+      </aside>
+
+      {/* Main Area */}
+      <main className="flex-1 flex flex-col relative h-full bg-[var(--bg-main)]">
+        {/* Background ambient light */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-[300px] bg-[var(--orb-1)] blur-[120px] pointer-events-none"></div>
+
+        {/* Header (Mobile) */}
+        <header className="md:hidden flex items-center justify-between p-4 border-b border-[var(--border-color)] bg-[var(--glass-bg)] backdrop-blur-md sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-5 h-5 text-[var(--accent)]" />
+            <span className="font-medium text-[var(--text-primary)]">DQ.SYS</span>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setActiveTab('chat')} className={`p-2 rounded ${activeTab === 'chat' ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}><Cpu className="w-5 h-5"/></button>
+            <button onClick={() => setActiveTab('code')} className={`p-2 rounded ${activeTab === 'code' ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}><Code2 className="w-5 h-5"/></button>
+            <button onClick={() => setActiveTab('config')} className={`p-2 rounded ${activeTab === 'config' ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}><User className="w-5 h-5"/></button>
+          </div>
+        </header>
+
+        {renderContent()}
 
       </main>
     </div>

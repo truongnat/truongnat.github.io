@@ -2,31 +2,49 @@
 
 @theme {
   --animate-pulse-fast: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-glitch: glitch 0.5s ease-in-out infinite alternate;
-
+  
   @keyframes pulse-fast {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
   }
-
-  @keyframes glitch {
-    0% { transform: translate(0); text-shadow: -2px 0 red, 2px 0 cyan; }
-    20% { transform: translate(-2px, 2px); text-shadow: 2px 0 red, -2px 0 cyan; }
-    40% { transform: translate(-2px, -2px); text-shadow: 1px 0 red, -1px 0 cyan; }
-    60% { transform: translate(2px, 2px); text-shadow: -1px 0 red, 1px 0 cyan; }
-    80% { transform: translate(2px, -2px); text-shadow: 2px 0 red, -2px 0 cyan; }
-    100% { transform: translate(0); text-shadow: -2px 0 red, 2px 0 cyan; }
-  }
 }
 
 @layer base {
+  :root {
+    --bg-main: #f8fafc;
+    --bg-panel: #ffffff;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent: #0284c7;
+    --accent-bg: rgba(2, 132, 199, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --orb-1: rgba(2, 132, 199, 0.2);
+    --orb-2: rgba(139, 92, 246, 0.2);
+    --msg-sys: #f1f5f9;
+  }
+
+  .dark {
+    --bg-main: #0a0a0a;
+    --bg-panel: #050505;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #00f0ff;
+    --accent-bg: rgba(0, 240, 255, 0.1);
+    --glass-bg: rgba(5, 5, 5, 0.8);
+    --orb-1: rgba(0, 240, 255, 0.1);
+    --orb-2: rgba(138, 43, 226, 0.1);
+    --msg-sys: rgba(255, 255, 255, 0.05);
+  }
+
   body {
-    @apply antialiased bg-[#0a0a0a] text-neutral-300;
+    @apply antialiased bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors duration-300;
     font-family: 'Inter', system-ui, sans-serif;
   }
 }
 
-/* Custom scrollbar for chat */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -34,11 +52,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: var(--border-color);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--text-secondary);
 }
 
 .font-mono {
@@ -48,7 +66,7 @@
 .typewriter::after {
   content: '|';
   animation: blink 1s step-end infinite;
-  color: #00f0ff;
+  color: var(--accent);
 }
 
 @keyframes blink {
