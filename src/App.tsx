@@ -5,13 +5,14 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 type Message = {
   id: string;
-  sender: "user" | "kimi";
+  sender: "user" | "sys";
   content: React.ReactNode;
 };
 
-const SYSTEM_PROMPT = `Hi. I am Kimi K3, acting as the synthetic neural representation of Dao Quang Truong. 
-I have ingested his entire career history, source code, and engineering methodologies.
-How may I assist you in exploring his profile today?`;
+const SYSTEM_PROMPT = `INITIATING NEURAL HANDSHAKE... SUCCESS.
+Welcome. I am DQ.SYS, the synthetic neural representation of Dao Quang Truong. 
+I have been trained on his entire engineering history, source code, and architectural methodologies.
+Select a protocol below to begin data retrieval.`;
 
 const PROJECTS = [
   { name: "rnui", desc: "A high-performance, dual-layer UI design system for React Native (iOS + Android) with headless primitives.", link: "https://github.com/truongnat/rnui" },
@@ -52,7 +53,7 @@ export default function App() {
     setTimeout(() => {
       setMessages([{
         id: "sys-1",
-        sender: "kimi",
+        sender: "sys",
         content: <TypewriterText text={SYSTEM_PROMPT} onComplete={() => setIsReady(true)} />
       }]);
     }, 500);
@@ -136,7 +137,7 @@ export default function App() {
         );
       }
       
-      setMessages([...newMessages, { id: Date.now().toString(), sender: "kimi", content: response }]);
+      setMessages([...newMessages, { id: Date.now().toString(), sender: "sys", content: response }]);
       setIsTyping(false);
     }, 1000);
   };
@@ -151,7 +152,7 @@ export default function App() {
              <div className="absolute inset-0 bg-[#00f0ff]/20 animate-pulse-fast"></div>
              <Sparkles className="w-4 h-4 text-[#00f0ff] relative z-10" />
           </div>
-          <span className="font-medium text-white tracking-wide">Kimi K3 <span className="text-xs text-neutral-500 ml-1">v2.0</span></span>
+          <span className="font-medium text-white tracking-wide">DQ.SYS <span className="text-xs text-neutral-500 ml-1">v1.0</span></span>
         </div>
         
         <div className="text-xs font-mono text-neutral-500 mb-4 uppercase tracking-wider">Neural Context</div>
@@ -159,7 +160,7 @@ export default function App() {
         <nav className="flex flex-col gap-2 flex-1">
           <button className="flex items-center gap-3 px-3 py-2 rounded-md bg-white/5 text-white border border-white/10 text-sm transition-colors text-left">
             <Cpu className="w-4 h-4 text-[#00f0ff]" />
-            D.Q.Truong Matrix
+            Identity Matrix
           </button>
           <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/5 text-neutral-400 hover:text-white transition-colors text-sm text-left">
             <Code2 className="w-4 h-4" />
@@ -187,7 +188,7 @@ export default function App() {
         {/* Header (Mobile) */}
         <header className="md:hidden flex items-center gap-3 p-4 border-b border-white/10 bg-[#050505]/80 backdrop-blur-md sticky top-0 z-10">
           <Sparkles className="w-5 h-5 text-[#00f0ff]" />
-          <span className="font-medium text-white">Kimi K3</span>
+          <span className="font-medium text-white">DQ.SYS</span>
         </header>
 
         {/* Chat History */}
@@ -200,12 +201,12 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex gap-4 max-w-3xl mx-auto ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
               >
-                <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === "kimi" ? "bg-white/10" : "bg-[#00f0ff]/20 text-[#00f0ff]"}`}>
-                  {msg.sender === "kimi" ? <Sparkles className="w-4 h-4" /> : <User className="w-4 h-4" />}
+                <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === "sys" ? "bg-white/10 border border-white/20" : "bg-[#00f0ff]/20 text-[#00f0ff]"}`}>
+                  {msg.sender === "sys" ? <Sparkles className="w-4 h-4 text-[#00f0ff]" /> : <User className="w-4 h-4" />}
                 </div>
                 <div className={`flex-1 ${msg.sender === "user" ? "text-right" : ""}`}>
                   <div className="font-medium text-sm text-neutral-400 mb-1">
-                    {msg.sender === "kimi" ? "Kimi K3" : "Guest User"}
+                    {msg.sender === "sys" ? "DQ.SYS" : "Guest"}
                   </div>
                   <div className={`prose prose-invert max-w-none text-sm md:text-base leading-relaxed ${msg.sender === "user" ? "text-white" : "text-neutral-300"}`}>
                     {msg.content}
@@ -220,7 +221,7 @@ export default function App() {
                   <Sparkles className="w-4 h-4 animate-spin" />
                 </div>
                 <div>
-                  <div className="font-medium text-sm text-neutral-400 mb-1">Kimi K3</div>
+                  <div className="font-medium text-sm text-neutral-400 mb-1">DQ.SYS</div>
                   <div className="flex gap-1 mt-2">
                     <div className="w-2 h-2 rounded-full bg-neutral-600 animate-bounce"></div>
                     <div className="w-2 h-2 rounded-full bg-neutral-600 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
@@ -266,7 +267,7 @@ export default function App() {
               </button>
             </div>
             <div className="text-center text-xs font-mono text-neutral-600 mt-3">
-              Kimi K3 AI can make mistakes. Verify important information.
+              DQ.SYS can make mistakes. Verify important information.
             </div>
           </div>
         </div>
