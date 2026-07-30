@@ -3,7 +3,8 @@ import { Spotlight } from "./components/Spotlight";
 import { Meteors } from "./components/Meteors";
 import { BentoGrid, BentoGridItem } from "./components/BentoGrid";
 import { motion } from "framer-motion";
-import { Code, Terminal, Bot, Layout, Github, Mail, Linkedin } from "lucide-react";
+import { Code, Terminal, Bot, Layout, Mail } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const Skeleton = () => (
   <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-800 border border-neutral-800 relative overflow-hidden">
@@ -79,11 +80,11 @@ function App() {
           
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
             <a href="https://github.com/truongnat" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-full hover:scale-105 transition duration-200">
-              <Github className="w-5 h-5" />
+              <FaGithub className="w-5 h-5" />
               Explore GitHub
             </a>
             <a href="https://linkedin.com/in/truongdq01" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white border border-neutral-800 font-semibold rounded-full hover:bg-neutral-800 transition duration-200">
-              <Linkedin className="w-5 h-5" />
+              <FaLinkedin className="w-5 h-5" />
               Connect
             </a>
           </div>
@@ -124,10 +125,10 @@ function App() {
               <Mail className="w-5 h-5" />
             </a>
             <a href="https://github.com/truongnat" className="text-neutral-500 hover:text-white transition">
-              <Github className="w-5 h-5" />
+              <FaGithub className="w-5 h-5" />
             </a>
             <a href="https://linkedin.com/in/truongdq01" className="text-neutral-500 hover:text-white transition">
-              <Linkedin className="w-5 h-5" />
+              <FaLinkedin className="w-5 h-5" />
             </a>
           </div>
         </div>
