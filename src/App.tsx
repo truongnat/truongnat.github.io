@@ -1,180 +1,159 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Code, Terminal, Bot, Layout, Mail, ArrowUpRight } from "lucide-react";
+import React from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { cn } from "./utils";
+import { ExternalLink, Terminal, Code2, Sparkles, Layers } from "lucide-react";
 
 const projects = [
   {
     title: "rnui",
-    description: "High-performance UI design system for React Native with headless primitives.",
-    tech: ["React Native", "TypeScript"],
-    color: "bg-[#ff90e8]",
-    link: "https://github.com/truongnat/rnui"
+    category: "Design System",
+    description: "A high-performance, dual-layer UI design system for React Native (iOS + Android) with headless primitives.",
+    link: "https://github.com/truongnat/rnui",
+    icon: <Layers className="w-5 h-5 text-[#00f0ff]" />
   },
   {
     title: "aix",
-    description: "AI Engineering Platform. TS monorepo for autonomous SDLC guardrails.",
-    tech: ["AI Agents", "TypeScript"],
-    color: "bg-[#ffc900]",
-    link: "https://github.com/truongnat/aix"
+    category: "AI Platform",
+    description: "AI Engineering Platform. TS monorepo consolidating skills, guardrails & autonomous SDLC.",
+    link: "https://github.com/truongnat/aix",
+    icon: <Sparkles className="w-5 h-5 text-[#8a2be2]" />
   },
   {
     title: "simple-skills",
-    description: "Minimal AI agent skills with clear workflows and flat YAML contracts.",
-    tech: ["Python", "Agents"],
-    color: "bg-[#23a094]",
-    link: "https://github.com/truongnat/simple-skills"
+    category: "Orchestration",
+    description: "Minimal AI agent skills with clear workflows, flat YAML contracts, and structured artifacts.",
+    link: "https://github.com/truongnat/simple-skills",
+    icon: <Terminal className="w-5 h-5 text-[#00f0ff]" />
   },
   {
     title: "auraos-suite",
-    description: "Native desktop utility suite for Ubuntu (GNOME/Wayland).",
-    tech: ["Rust", "Tauri", "Svelte 5"],
-    color: "bg-[#f95a2c]",
-    link: "https://github.com/truongnat/auraos-suite"
+    category: "Desktop Native",
+    description: "Native desktop utility suite for Ubuntu (GNOME/Wayland). Built with Rust + Tauri v2 + Svelte 5.",
+    link: "https://github.com/truongnat/auraos-suite",
+    icon: <Code2 className="w-5 h-5 text-[#8a2be2]" />
   }
 ];
 
-const Marquee = ({ text }: { text: string }) => {
-  return (
-    <div className="relative flex overflow-x-hidden border-y-4 border-black bg-[#ffc900] py-4 whitespace-nowrap">
-      <div className="animate-marquee whitespace-nowrap flex space-x-12">
-        {[...Array(10)].map((_, i) => (
-          <span key={i} className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-black">
-            {text} •
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 function App() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
   return (
-    <div className="min-h-screen bg-[#fbf7f3] text-black selection:bg-black selection:text-[#ffc900] font-sans">
+    <div className="relative min-h-screen bg-[#050505] text-neutral-300 font-sans overflow-x-hidden selection:bg-[#00f0ff] selection:text-black">
       
-      {/* Brutalist Navbar */}
-      <nav className="border-b-4 border-black bg-white flex justify-between items-center p-6 lg:px-12">
-        <div className="font-black text-2xl tracking-tighter uppercase">DQ.Truong</div>
-        <div className="flex gap-4">
-          <a href="https://github.com/truongnat" className="p-3 border-2 border-black rounded-full hover:bg-[#ff90e8] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">
-            <FaGithub className="w-6 h-6" />
-          </a>
-          <a href="https://linkedin.com/in/truongdq01" className="p-3 border-2 border-black rounded-full hover:bg-[#23a094] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">
-            <FaLinkedin className="w-6 h-6" />
-          </a>
-        </div>
-      </nav>
+      {/* Shader UI Background Orbs */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#00f0ff] opacity-[0.07] blur-[100px] animate-orb-float mix-blend-screen"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-[#8a2be2] opacity-[0.08] blur-[120px] animate-orb-float-delayed mix-blend-screen"></div>
+      </div>
 
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-6 py-20 lg:py-32 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 lg:px-12">
         
-        <div className="lg:col-span-8 flex flex-col items-start gap-8">
-          <div className="inline-block border-4 border-black bg-[#ff90e8] px-6 py-2 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform -rotate-2">
-            <span className="font-bold text-xl uppercase tracking-widest">Fullstack & AI Engineer</span>
+        {/* Nav */}
+        <header className="flex justify-between items-center mb-24 animate-fade-in opacity-0" style={{ animationDelay: '0.1s' }}>
+          <div className="text-xl font-medium tracking-tight text-white flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#00f0ff] shadow-[0_0_8px_#00f0ff]"></span>
+            DQ.TRUONG
           </div>
-          
-          <h1 className="text-6xl sm:text-7xl lg:text-9xl font-black uppercase leading-[0.9] tracking-tighter">
-            I Build<br />
-            <span className="text-transparent" style={{ WebkitTextStroke: "2px black" }}>Systems</span><br />
-            That Work.
-          </h1>
-          
-          <p className="text-xl md:text-2xl font-medium max-w-2xl mt-4 border-l-8 border-black pl-6">
-            6+ years of experience engineering high-performance TypeScript applications, native cross-platform tools, and AI-assisted workflows.
-          </p>
-
-          <a href="mailto:truongdq.dev@gmail.com" 
-             className="mt-8 text-2xl font-black uppercase border-4 border-black bg-[#f95a2c] text-black px-10 py-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-2 hover:translate-x-2 hover:shadow-none transition-all flex items-center gap-4">
-            Let's Talk <ArrowUpRight className="w-8 h-8" />
-          </a>
-        </div>
-
-        <div className="lg:col-span-4 hidden lg:flex flex-col gap-8">
-          {/* Decorative Brutalist Blocks */}
-          <div className="w-full aspect-square border-4 border-black bg-[#23a094] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center p-8 group overflow-hidden relative">
-             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iIzAwMCIvPjwvc3ZnPg==')] opacity-30"></div>
-             <Bot className="w-32 h-32 text-black group-hover:scale-125 transition-transform duration-500 relative z-10" />
-          </div>
-          <div className="grid grid-cols-2 gap-8">
-            <div className="aspect-square border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
-               <span className="font-black text-6xl">6+</span>
-            </div>
-            <div className="aspect-square border-4 border-black bg-[#ffc900] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
-               <Code className="w-16 h-16" />
-            </div>
-          </div>
-        </div>
-
-      </main>
-
-      {/* Infinite Marquee */}
-      <Marquee text="React Native • TypeScript • Rust • Python • AI Agents • Go • Node.js • Cloudflare • Tauri" />
-
-      {/* Selected Projects */}
-      <section className="max-w-7xl mx-auto px-6 py-32">
-        <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-16 border-b-8 border-black pb-4 inline-block">
-          The Vault
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {projects.map((project, idx) => (
-            <a 
-              key={idx}
-              href={project.link}
-              target="_blank"
-              rel="noreferrer"
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              className={cn(
-                "group block border-4 border-black p-8 transition-all duration-300 relative bg-white",
-                "shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-y-3 hover:translate-x-3 hover:shadow-none"
-              )}
-            >
-              {/* Colored header strip */}
-              <div className={cn("absolute top-0 left-0 right-0 h-4 border-b-4 border-black", project.color)}></div>
-              
-              <div className="mt-6 flex justify-between items-start">
-                <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tight">{project.title}</h3>
-                <div className="p-2 border-2 border-black rounded-full bg-white group-hover:bg-black group-hover:text-white transition-colors">
-                  <ArrowUpRight className="w-8 h-8" />
-                </div>
-              </div>
-              
-              <p className="mt-6 text-xl font-medium leading-relaxed max-w-sm">
-                {project.description}
-              </p>
-              
-              <div className="mt-12 flex flex-wrap gap-3">
-                {project.tech.map((t, i) => (
-                  <span key={i} className="px-4 py-2 border-2 border-black font-bold uppercase text-sm bg-gray-100">
-                    {t}
-                  </span>
-                ))}
-              </div>
+          <div className="flex items-center gap-6 text-sm font-medium">
+            <a href="https://github.com/truongnat" className="hover:text-white transition-colors flex items-center gap-2">
+              <FaGithub className="w-4 h-4" /> <span className="hidden sm:inline">GitHub</span>
             </a>
-          ))}
-        </div>
-      </section>
+            <a href="https://linkedin.com/in/truongdq01" className="hover:text-white transition-colors flex items-center gap-2">
+              <FaLinkedin className="w-4 h-4" /> <span className="hidden sm:inline">LinkedIn</span>
+            </a>
+          </div>
+        </header>
 
-      {/* Footer */}
-      <footer className="border-t-4 border-black bg-white overflow-hidden relative">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iIzAwMCIvPjwvc3ZnPg==')] opacity-10"></div>
-        <div className="max-w-7xl mx-auto px-6 py-20 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="font-black text-4xl uppercase tracking-tighter">
-            Build something<br/>
-            <span className="text-[#ff90e8] drop-shadow-[2px_2px_0_rgba(0,0,0,1)]" style={{ WebkitTextStroke: "1px black" }}>Unreasonable.</span>
+        {/* Hero Section */}
+        <main className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
+          <div className="animate-fade-in opacity-0" style={{ animationDelay: '0.2s' }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs font-mono text-[#00f0ff] mb-8">
+              <Sparkles className="w-3 h-3" />
+              <span>Fullstack & AI Engineer</span>
+            </div>
+            
+            <h1 className="text-5xl lg:text-7xl font-medium tracking-tight text-white leading-[1.1] mb-6">
+              Engineering<br/>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00f0ff] to-[#8a2be2]">intelligent</span><br/>
+              systems.
+            </h1>
+            
+            <p className="text-lg text-neutral-400 max-w-lg mb-10 leading-relaxed">
+              One intelligent layer across your entire engineering system. Building at the intersection of TypeScript, native apps, and AI workflows.
+            </p>
+            
+            <div className="flex gap-4">
+              <a href="mailto:truongdq.dev@gmail.com" className="px-6 py-3 rounded-lg bg-white text-black font-medium hover:bg-neutral-200 transition-colors">
+                Initialize Contact
+              </a>
+              <a href="https://truongsoftware.com/Dao_Quang_Truong_CV.pdf" className="px-6 py-3 rounded-lg glass-panel hover:text-white transition-colors">
+                View Resume
+              </a>
+            </div>
+          </div>
+
+          {/* Code Native Window */}
+          <div className="glass-panel rounded-2xl p-6 shadow-2xl relative overflow-hidden animate-fade-in opacity-0" style={{ animationDelay: '0.4s' }}>
+            {/* Window controls */}
+            <div className="flex gap-2 mb-6">
+              <div className="w-3 h-3 rounded-full bg-neutral-700"></div>
+              <div className="w-3 h-3 rounded-full bg-neutral-700"></div>
+              <div className="w-3 h-3 rounded-full bg-neutral-700"></div>
+            </div>
+            
+            <pre className="code-block font-mono text-sm leading-loose overflow-x-auto text-neutral-300">
+              <code><span className="text-[#8a2be2]">import</span> &#123; Agent &#125; <span className="text-[#8a2be2]">from</span> <span className="text-green-400">'@aix/core'</span>;</code>
+              <code></code>
+              <code><span className="text-[#8a2be2]">const</span> sys <span className="text-[#00f0ff]">=</span> <span className="text-[#8a2be2]">new</span> <span className="text-yellow-200">Agent</span>(&#123;</code>
+              <code>  identity: <span className="text-green-400">'Dao Quang Truong'</span>,</code>
+              <code>  skills: [<span className="text-green-400">'TypeScript'</span>, <span className="text-green-400">'Rust'</span>, <span className="text-green-400">'AI'</span>]</code>
+              <code>&#125;);</code>
+              <code></code>
+              <code><span className="text-neutral-500">// Executing core routine</span></code>
+              <code><span className="text-[#8a2be2]">await</span> sys.<span className="text-yellow-200">plan</span>(<span className="text-green-400">"ship the impossible"</span>);</code>
+              <code className="text-[#00f0ff] mt-4">→ 12 modules architected</code>
+              <code className="text-[#00f0ff]">→ tests passing</code>
+              <code className="text-white font-bold mt-2">ready to deploy_</code>
+            </pre>
+            
+            {/* Subtle overlay reflection */}
+            <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
+          </div>
+        </main>
+
+        {/* Selected Work */}
+        <section className="animate-fade-in opacity-0" style={{ animationDelay: '0.6s' }}>
+          <div className="flex items-center gap-4 mb-12">
+            <h2 className="text-2xl font-medium text-white">Console / Projects</h2>
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-neutral-800 to-transparent"></div>
           </div>
           
-          <div className="flex gap-6">
-             <a href="mailto:truongdq.dev@gmail.com" className="font-bold text-xl uppercase border-b-4 border-transparent hover:border-black transition-colors">Email</a>
-             <a href="https://github.com/truongnat" className="font-bold text-xl uppercase border-b-4 border-transparent hover:border-black transition-colors">GitHub</a>
-             <a href="https://linkedin.com/in/truongdq01" className="font-bold text-xl uppercase border-b-4 border-transparent hover:border-black transition-colors">LinkedIn</a>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projects.map((project, idx) => (
+              <a key={idx} href={project.link} target="_blank" rel="noreferrer" className="block glass-panel p-8 rounded-2xl group cursor-pointer transition-all duration-300">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/5 group-hover:border-white/20 transition-colors">
+                    {project.icon}
+                  </div>
+                  <ExternalLink className="w-5 h-5 text-neutral-600 group-hover:text-white transition-colors" />
+                </div>
+                
+                <div className="text-xs font-mono text-[#8a2be2] mb-3">{project.category}</div>
+                <h3 className="text-xl font-medium text-white mb-3 group-hover:text-[#00f0ff] transition-colors">{project.title}</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed">
+                  {project.description}
+                </p>
+              </a>
+            ))}
           </div>
-        </div>
-      </footer>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-32 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-neutral-500 pb-12 animate-fade-in opacity-0" style={{ animationDelay: '0.8s' }}>
+          <p>© 2026 Dao Quang Truong. Built with React & Liquid Light.</p>
+          <div className="flex gap-4">
+             <span>SYS.STATUS: <span className="text-[#00f0ff]">ONLINE</span></span>
+          </div>
+        </footer>
+
+      </div>
     </div>
   );
 }
