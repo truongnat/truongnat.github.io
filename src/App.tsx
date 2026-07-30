@@ -98,7 +98,7 @@ export default function App() {
             <p>Scanning technical matrix...</p>
             <div className="flex flex-wrap gap-2 mt-4">
               {SKILLS.map((s, i) => (
-                <span key={s} className="px-3 py-1 rounded bg-white/5 border border-white/10 font-mono text-xs text-neutral-300 animate-fade-in" style={{ animationDelay: \`\${i * 0.05}s\` }}>
+                <span key={s} className="px-3 py-1 rounded bg-white/5 border border-white/10 font-mono text-xs text-neutral-300 animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
                   {s}
                 </span>
               ))}
@@ -198,16 +198,16 @@ export default function App() {
                 key={msg.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={\`flex gap-4 max-w-3xl mx-auto \${msg.sender === "user" ? "flex-row-reverse" : ""}\`}
+                className={`flex gap-4 max-w-3xl mx-auto ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
               >
-                <div className={\`shrink-0 w-8 h-8 rounded-full flex items-center justify-center \${msg.sender === "kimi" ? "bg-white/10" : "bg-[#00f0ff]/20 text-[#00f0ff]"}\`}>
+                <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === "kimi" ? "bg-white/10" : "bg-[#00f0ff]/20 text-[#00f0ff]"}`}>
                   {msg.sender === "kimi" ? <Sparkles className="w-4 h-4" /> : <User className="w-4 h-4" />}
                 </div>
-                <div className={\`flex-1 \${msg.sender === "user" ? "text-right" : ""}\`}>
+                <div className={`flex-1 ${msg.sender === "user" ? "text-right" : ""}`}>
                   <div className="font-medium text-sm text-neutral-400 mb-1">
                     {msg.sender === "kimi" ? "Kimi K3" : "Guest User"}
                   </div>
-                  <div className={\`prose prose-invert max-w-none text-sm md:text-base leading-relaxed \${msg.sender === "user" ? "text-white" : "text-neutral-300"}\`}>
+                  <div className={`prose prose-invert max-w-none text-sm md:text-base leading-relaxed ${msg.sender === "user" ? "text-white" : "text-neutral-300"}`}>
                     {msg.content}
                   </div>
                 </div>
