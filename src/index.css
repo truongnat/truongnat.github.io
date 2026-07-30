@@ -1,56 +1,56 @@
 @import "tailwindcss";
 
 @theme {
-  --animate-orb-float: orb-float 20s ease-in-out infinite alternate;
-  --animate-orb-float-delayed: orb-float 25s ease-in-out 2s infinite alternate-reverse;
-  --animate-fade-in: fade-in 1s ease-out forwards;
+  --animate-pulse-fast: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-glitch: glitch 0.5s ease-in-out infinite alternate;
 
-  @keyframes orb-float {
-    0% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0, 0) scale(1); }
+  @keyframes pulse-fast {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
   }
 
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  @keyframes glitch {
+    0% { transform: translate(0); text-shadow: -2px 0 red, 2px 0 cyan; }
+    20% { transform: translate(-2px, 2px); text-shadow: 2px 0 red, -2px 0 cyan; }
+    40% { transform: translate(-2px, -2px); text-shadow: 1px 0 red, -1px 0 cyan; }
+    60% { transform: translate(2px, 2px); text-shadow: -1px 0 red, 1px 0 cyan; }
+    80% { transform: translate(2px, -2px); text-shadow: 2px 0 red, -2px 0 cyan; }
+    100% { transform: translate(0); text-shadow: -2px 0 red, 2px 0 cyan; }
   }
 }
 
 @layer base {
   body {
-    @apply antialiased bg-[#050505] text-neutral-300;
-    font-family: 'Geist', 'Inter', system-ui, sans-serif;
+    @apply antialiased bg-[#0a0a0a] text-neutral-300;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 }
 
-/* Custom Glass Morphism */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Custom scrollbar for chat */
+::-webkit-scrollbar {
+  width: 6px;
 }
-.glass-panel:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
-/* Code Snippet Styles */
-.code-block {
-  counter-reset: line;
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
 }
-.code-block code {
-  display: block;
-  counter-increment: line;
+
+.typewriter::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: #00f0ff;
 }
-.code-block code::before {
-  content: counter(line);
-  display: inline-block;
-  width: 2rem;
-  margin-right: 1.5rem;
-  color: #4b5563;
-  text-align: right;
-  font-family: 'Geist Mono', 'JetBrains Mono', monospace;
+
+@keyframes blink {
+  50% { opacity: 0; }
 }
