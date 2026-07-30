@@ -1,68 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, Send, Cpu, Sparkles, FolderGit2, Code2, Link as LinkIcon, User, ExternalLink, Moon, Sun, Globe, Mail } from "lucide-react";
+import { Terminal, Send, Cpu, Sparkles, FolderGit2, Code2, Link as LinkIcon, User, ExternalLink, Moon, Sun, Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 type Message = { id: string; sender: "user" | "sys"; content: React.ReactNode; };
 
-// Dictionary for i18n
-const DICT = {
-  en: {
-    systemPrompt: "INITIATING NEURAL HANDSHAKE... SUCCESS.\nWelcome. I am DQ.SYS, the synthetic neural representation of Dao Quang Truong.\nI have been trained on his entire engineering history, source code, and architectural methodologies.\nSelect a protocol below to begin data retrieval.",
-    btnWho: "Who is Dao Quang Truong?",
-    btnProjects: "View Projects",
-    btnSkills: "Check Skills",
-    btnContact: "Contact Protocol",
-    tabMatrix: "Identity Matrix",
-    tabCode: "Source Code",
-    tabConfig: "User Config",
-    placeholder: "Select a command above to interact...",
-    footer: "DQ.SYS can make mistakes. Verify important information.",
-    codeTitle: "Neural Repositories & Modules",
-    codeDesc: "Raw source code and telemetry data from recent commits.",
-    configTitle: "System Configuration",
-    configDesc: "Modify the UI runtime parameters below.",
-    theme: "Theme",
-    lang: "Language",
-    resume: "Download Original CV",
-    msgWho: (
-      <div className="space-y-2">
-        <p className="text-[var(--text-primary)]">Entity Profile Loaded.</p>
-        <p>Dao Quang Truong is a Fullstack & AI Engineer with 6+ years of experience.</p>
-        <p>He specializes in building high-performance TypeScript applications, native cross-platform tools, and AI-assisted developer workflows.</p>
-        <p className="text-[var(--text-secondary)] italic mt-4">"Building intelligent systems and cross-platform products."</p>
-      </div>
-    ),
-    msgContact: "Establishing secure communication channels:"
-  },
-  vi: {
-    systemPrompt: "KHỞI TẠO KẾT NỐI THẦN KINH... THÀNH CÔNG.\nXin chào. Tôi là DQ.SYS, bản sao kỹ thuật số của Đào Quang Trường.\nTôi đã được huấn luyện bằng toàn bộ lịch sử làm việc, mã nguồn và tư duy kiến trúc của anh ấy.\nHãy chọn một giao thức bên dưới để bắt đầu truy xuất dữ liệu.",
-    btnWho: "Đào Quang Trường là ai?",
-    btnProjects: "Xem Dự án",
-    btnSkills: "Kiểm tra Kỹ năng",
-    btnContact: "Giao thức Liên hệ",
-    tabMatrix: "Ma trận Định danh",
-    tabCode: "Mã nguồn",
-    tabConfig: "Cấu hình Hệ thống",
-    placeholder: "Chọn một lệnh bên trên để tương tác...",
-    footer: "DQ.SYS có thể tạo ra lỗi. Vui lòng xác minh thông tin quan trọng.",
-    codeTitle: "Kho lưu trữ Thần kinh & Module",
-    codeDesc: "Mã nguồn gốc và dữ liệu phân tích từ các commit gần đây.",
-    configTitle: "Cấu hình Hệ thống",
-    configDesc: "Sửa đổi các thông số giao diện tại đây.",
-    theme: "Giao diện",
-    lang: "Ngôn ngữ",
-    resume: "Tải CV Gốc",
-    msgWho: (
-      <div className="space-y-2">
-        <p className="text-[var(--text-primary)]">Đã tải Hồ sơ Thực thể.</p>
-        <p>Đào Quang Trường là một Kỹ sư Fullstack & AI với hơn 6 năm kinh nghiệm.</p>
-        <p>Anh chuyên xây dựng các ứng dụng TypeScript hiệu suất cao, công cụ đa nền tảng (native) và các luồng làm việc hỗ trợ bởi AI cho lập trình viên.</p>
-        <p className="text-[var(--text-secondary)] italic mt-4">"Building intelligent systems and cross-platform products."</p>
-      </div>
-    ),
-    msgContact: "Đang thiết lập kênh giao tiếp bảo mật:"
-  }
+const t = {
+  systemPrompt: "System online. I am DQ.SYS, Dao Quang Truong's digital twin.\nI process his engineering history, source code, and architecture.\nSelect an option below to retrieve data.",
+  btnWho: "Who is Dao Quang Truong?",
+  btnProjects: "View Projects",
+  btnSkills: "Check Skills",
+  btnContact: "Contact",
+  tabMatrix: "Identity Matrix",
+  tabCode: "Source Code",
+  tabConfig: "User Config",
+  placeholder: "Select a command above to interact...",
+  footer: "DQ.SYS can make mistakes. Verify important information.",
+  codeTitle: "Repositories & Modules",
+  codeDesc: "Source code and telemetry from recent commits.",
+  configTitle: "System Configuration",
+  configDesc: "Modify the UI runtime parameters below.",
+  theme: "Theme",
+  resume: "Download Original CV",
+  msgWho: (
+    <div className="space-y-2">
+      <p className="text-[var(--text-primary)]">Profile loaded.</p>
+      <p>Dao Quang Truong is a Fullstack & AI Engineer with 6+ years of experience.</p>
+      <p>He builds fast TypeScript apps, native cross-platform tools, and AI developer workflows.</p>
+      <p className="text-[var(--text-secondary)] italic mt-4">"Building intelligent systems and cross-platform products."</p>
+    </div>
+  ),
+  msgContact: "Secure channels established:"
 };
 
 const PROJECTS = [
@@ -93,18 +61,14 @@ function TypewriterText({ text, onComplete }: { text: string; onComplete?: () =>
 
 export default function App() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [lang, setLang] = useState<"en" | "vi">("en");
   const [activeTab, setActiveTab] = useState<"chat" | "code" | "config">("chat");
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  const t = DICT[lang];
 
   useEffect(() => {
-    // Inject dark mode class
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
@@ -112,7 +76,6 @@ export default function App() {
     }
   }, [theme]);
 
-  // Initial boot sequence
   useEffect(() => {
     setMessages([]);
     setIsReady(false);
@@ -123,7 +86,7 @@ export default function App() {
         content: <TypewriterText text={t.systemPrompt} onComplete={() => setIsReady(true)} />
       }]);
     }, 500);
-  }, [lang]); // Re-run if language changes
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -137,7 +100,6 @@ export default function App() {
     setMessages(newMessages);
     setIsTyping(true);
 
-    // Dynamic delay: Contact should be fast
     const delay = actionKey === "btnContact" ? 200 : 800;
 
     setTimeout(() => {
@@ -245,29 +207,13 @@ export default function App() {
                 {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
             </div>
-            
-            <div className="p-6 rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] flex justify-between items-center">
-              <div>
-                <h3 className="font-medium text-[var(--text-primary)] mb-1">{t.lang}</h3>
-                <p className="text-sm text-[var(--text-secondary)]">English / Tiếng Việt</p>
-              </div>
-              <button 
-                onClick={() => setLang(lang === 'en' ? 'vi' : 'en')}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--border-color)] hover:bg-[var(--msg-sys)] font-mono text-[var(--text-primary)] transition-colors"
-              >
-                <Globe className="w-4 h-4" />
-                {lang === 'en' ? 'VI' : 'EN'}
-              </button>
-            </div>
           </div>
         </div>
       );
     }
 
-    // Default chat view
     return (
       <>
-        {/* Chat History */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
@@ -310,7 +256,6 @@ export default function App() {
           <div ref={messagesEndRef} className="h-4" />
         </div>
 
-        {/* Input Area */}
         <div className="p-4 md:p-6 bg-gradient-to-t from-[var(--bg-main)] to-transparent">
           <div className="max-w-3xl mx-auto">
             <div className="flex flex-wrap gap-2 mb-4 justify-center md:justify-start">
@@ -342,8 +287,6 @@ export default function App() {
 
   return (
     <div className="h-screen w-full flex overflow-hidden selection:bg-[var(--accent)] selection:text-white">
-      
-      {/* Sidebar */}
       <aside className="hidden md:flex w-64 flex-col border-r border-[var(--border-color)] bg-[var(--bg-panel)] p-4 relative z-20">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] flex items-center justify-center relative overflow-hidden">
@@ -356,24 +299,15 @@ export default function App() {
         <div className="text-xs font-mono text-[var(--text-secondary)] mb-4 uppercase tracking-wider">Neural Context</div>
         
         <nav className="flex flex-col gap-2 flex-1">
-          <button 
-            onClick={() => setActiveTab('chat')}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'chat' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}
-          >
+          <button onClick={() => setActiveTab('chat')} className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'chat' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}>
             <Cpu className={`w-4 h-4 ${activeTab === 'chat' ? 'text-[var(--accent)]' : ''}`} />
             {t.tabMatrix}
           </button>
-          <button 
-             onClick={() => setActiveTab('code')}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'code' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}
-          >
+          <button onClick={() => setActiveTab('code')} className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'code' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}>
             <Code2 className={`w-4 h-4 ${activeTab === 'code' ? 'text-[var(--accent)]' : ''}`} />
             {t.tabCode}
           </button>
-          <button 
-             onClick={() => setActiveTab('config')}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'config' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}
-          >
+          <button onClick={() => setActiveTab('config')} className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-left transition-colors ${activeTab === 'config' ? 'bg-[var(--border-color)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--msg-sys)] hover:text-[var(--text-primary)]'}`}>
             <User className={`w-4 h-4 ${activeTab === 'config' ? 'text-[var(--accent)]' : ''}`} />
             {t.tabConfig}
           </button>
@@ -387,12 +321,9 @@ export default function App() {
         </div>
       </aside>
 
-      {/* Main Area */}
       <main className="flex-1 flex flex-col relative h-full bg-[var(--bg-main)]">
-        {/* Background ambient light */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-[300px] bg-[var(--orb-1)] blur-[120px] pointer-events-none"></div>
 
-        {/* Header (Mobile) */}
         <header className="md:hidden flex items-center justify-between p-4 border-b border-[var(--border-color)] bg-[var(--glass-bg)] backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <Sparkles className="w-5 h-5 text-[var(--accent)]" />
